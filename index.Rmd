@@ -212,25 +212,12 @@ cat("Model telah disimpan sebagai 'model_heating_oil.rds'\n")
 
 ## Marketer
 ```{r}
-# proses_marketer.R
-
-# 1. Baca model yang sudah dibuat oleh Sarah
 model_loaded <- readRDS("model_heating_oil.rds")
-
-# 2. Baca data calon pelanggan baru
 data_marketing <- read.csv("HeatingOil-Marketing.csv")
 head(data_marketing)
-
-# 3. Prediksi kebutuhan minyak
 prediksi <- predict(model_loaded, newdata = data_marketing)
-
-# 4. Tambahkan hasil prediksi ke data
 data_marketing$Prediksi_Heating_Oil <- prediksi
-
-# 5. Simpan hasil prediksi
 write.csv(data_marketing, "Prediksi_Kebutuhan_HeatingOil.csv", row.names = FALSE)
-
-cat("Prediksi telah disimpan ke 'Prediksi_Kebutuhan_HeatingOil.csv'\n")
 
 
 ```
@@ -239,7 +226,6 @@ cat("Prediksi telah disimpan ke 'Prediksi_Kebutuhan_HeatingOil.csv'\n")
 
 ## Visualisasi Prediksi
 ```{r}
-# Pastikan ggplot2 sudah tersedia
 if (!require(ggplot2)) install.packages("ggplot2", dependencies = TRUE)
 library(ggplot2)
 

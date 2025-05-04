@@ -1,0 +1,299 @@
+---
+title: "index"
+output: html_document
+date: "2025-05-04"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# SOAL1
+
+```{r}
+# Load library
+library(tidyverse)
+library(ggplot2)
+library(ggcorrplot)
+library(RColorBrewer)
+
+# Baca data
+data <- read.csv("HeatingOil.csv")
+
+# Tampilkan struktur
+str(data)
+
+```
+
+
+## Langkah 1: Correlation Matrix
+```{r}
+# Pilih hanya kolom-kolom yang relevan
+df_corr <- data %>%
+  select(Heating_Oil, Insulation, Temperature, Num_Occupants, Avg_Age, Home_Size)
+
+# Buat correlation matrix
+corr_matrix <- cor(df_corr)
+
+# Visualisasi: Heatmap
+ggcorrplot(corr_matrix,
+           hc.order = TRUE,
+           type = "lower",
+           lab = TRUE,
+           lab_size = 3,
+           colors = c("red", "white", "blue"),
+           title = "Correlation Matrix",
+           ggtheme = theme_minimal())
+
+```
+
+
+## 2 Interpretasi Correlation Matrix
+```{r}
+# Langkah 1: Load data
+data <- read.csv("HeatingOil.csv")
+
+# Langkah 2: Pilih variabel yang digunakan
+selected_data <- data[, c("Heating_Oil", "Insulation", "Temperature", 
+                          "Num_Occupants", "Avg_Age", "Home_Size")]
+
+# Langkah 3: Buat correlation matrix
+cor_matrix <- cor(selected_data)
+
+# Langkah 4: Tampilkan correlation matrix sebagai tabel
+print(round(cor_matrix, 2))  # dibulatkan 2 angka di belakang koma agar mudah dibaca
+
+# Langkah 5: Visualisasi correlation matrix dengan heatmap (menggunakan corrplot)
+# Jika belum terinstall, jalankan install.packages("corrplot")
+library(corrplot)
+corrplot(cor_matrix, method = "color", type = "upper", 
+         tl.col = "black", tl.srt = 45, addCoef.col = "black", number.cex = 0.7)
+
+```
+Korelasi terhadap variabel Heating_Oil (jumlah konsumsi minyak pemanas):
+Variabel	Korelasi	Interpretasi
+Insulation	-0.76	Korelasi negatif kuat: semakin bagus insulasi rumah, semakin sedikit minyak digunakan. Rumah yang lebih hangat butuh lebih sedikit pemanas.
+Temperature	-0.69	Korelasi negatif kuat: semakin tinggi suhu udara luar, semakin sedikit minyak digunakan (karena udara sudah cukup hangat).
+Home_Size	+0.65	Korelasi positif kuat: semakin besar ukuran rumah, semakin banyak minyak yang dibutuhkan untuk memanaskannya.
+Num_Occupants	+0.36	Korelasi positif sedang: rumah dengan lebih banyak penghuni cenderung menggunakan lebih banyak minyak, kemungkinan karena lebih banyak ruangan yang digunakan.
+Avg_Age	+0.12	Korelasi positif sangat lemah: tidak ada hubungan yang jelas antara usia penghuni dan jumlah minyak yang digunakan.
+
+Kesimpulan:
+Faktor Insulation, Temperature, dan Home_Size adalah yang paling berpengaruh terhadap konsumsi minyak pemanas rumah.
+
+Dua faktor pertama (Insulation dan Temperature) menurunkan konsumsi minyak, sedangkan Home_Size meningkatkan konsumsi minyak.
+
+Faktor jumlah penghuni (Num_Occupants) memberi pengaruh sedang, sedangkan usia penghuni (Avg_Age) tidak terlalu berpengaruh.
+
+Sarah dapat fokus pada rumah dengan insulasi buruk, suhu lingkungan rendah, dan ukuran besar—karena rumah-rumah ini memiliki kebutuhan minyak pemanas paling tinggi.
+
+
+
+## Langkah 3 Scatter Plot 1
+```{r}
+# Pastikan package ggplot2 tersedia (termasuk dalam tidyverse)
+# Jika belum ada, install terlebih dahulu:
+# install.packages("ggplot2")
+
+library(ggplot2)
+
+# Membuat scatter plot
+ggplot(data, aes(x = Heating_Oil, y = Avg_Age, color = Heating_Oil)) +
+  geom_point(size = 3, alpha = 0.8) +
+  scale_color_gradient(low = "lightblue", high = "darkred") +
+  labs(
+    title = "Scatter Plot: Heating_Oil vs Avg_Age",
+    x = "Jumlah Konsumsi Minyak Pemanas (Heating_Oil)",
+    y = "Usia Rata-rata Penghuni Rumah (Avg_Age)",
+    color = "Heating_Oil"
+  ) +
+  theme_minimal()
+
+```
+
+Penjelasan Visualisasi:
+Sumbu X: Heating_Oil (jumlah konsumsi minyak pemanas).
+
+Sumbu Y: Avg_Age (usia rata-rata penghuni rumah).
+
+Warna titik: menunjukkan intensitas nilai Heating_Oil, dari biru muda (rendah) ke merah tua (tinggi).
+
+Interpretasi Sederhana:
+Jika plot menunjukkan pola datar (tanpa tren), artinya tidak ada hubungan yang jelas antara rata-rata usia penghuni dan konsumsi minyak pemanas.
+Jika titik-titik condong naik atau turun secara jelas, itu menunjukkan ada tren positif atau negatif.
+
+Kesimpulan Contoh (Hipotetis):
+"Tidak terlihat korelasi yang kuat antara usia rata-rata penghuni dan jumlah konsumsi minyak. Artinya, usia penghuni bukan faktor utama yang memengaruhi konsumsi minyak pemanas."
+
+
+## Langkah 4: Scatter Plot 2
+
+```{r}
+# Scatter plot dengan gradasi warna berdasarkan Heating_Oil
+ggplot(data, aes(x = Temperature, y = Insulation, color = Heating_Oil)) +
+  geom_point(size = 3, alpha = 0.8) +
+  scale_color_gradient(low = "lightblue", high = "darkred") +
+  labs(
+    title = "Scatter Plot: Temperature vs Insulation",
+    x = "Rata-rata Suhu Udara (Temperature)",
+    y = "Skor Insulasi Rumah (Insulation)",
+    color = "Heating_Oil"
+  ) +
+  theme_minimal()
+
+```
+
+Penjelasan Visualisasi:
+Sumbu X: Temperature (rata-rata suhu udara).
+
+Sumbu Y: Insulation (skor kualitas insulasi).
+
+Warna titik: mewakili nilai konsumsi Heating_Oil — biru untuk rendah, merah untuk tinggi.
+
+ Interpretasi Sederhana:
+Jika tampak bahwa:
+
+Titik-titik merah (konsumsi tinggi) cenderung muncul pada suhu rendah dan insulasi rendah, maka bisa disimpulkan bahwa kombinasi suhu dingin dan insulasi buruk meningkatkan konsumsi minyak pemanas.
+
+Sebaliknya, konsumsi rendah (titik biru) akan lebih banyak pada suhu tinggi dan/atau insulasi baik.
+
+Kesimpulan Contoh (Hipotetis):
+"Rumah-rumah dengan suhu lingkungan lebih dingin dan insulasi yang buruk terlihat mengonsumsi minyak pemanas lebih banyak. Artinya, marketer bisa menargetkan rumah dengan insulasi rendah di wilayah dingin untuk promosi yang lebih efektif."
+
+
+## Langkah 5 Rekomendasi untuk 
+
+Rekomendasi Strategi Pemasaran
+1. Fokus pada Wilayah Bersuhu Dingin dengan Insulasi Buruk
+Data menunjukkan bahwa konsumsi minyak pemanas semakin tinggi ketika suhu lingkungan rendah dan insulasi rumah buruk.
+
+Strategi: Prioritaskan pemasaran di daerah dengan suhu dingin (temperature rendah) dan rumah-rumah dengan skor insulasi di bawah 5.
+
+Taktik: Kirimkan penawaran bundling: diskon minyak + layanan perbaikan insulasi ringan.
+
+2. Targetkan Rumah dengan Banyak Penghuni
+Korelasi positif antara jumlah penghuni rumah (Num_Occupants) dan konsumsi minyak pemanas.
+
+Strategi: Segmentasikan iklan atau promosi untuk keluarga besar.
+
+Taktik: Tawarkan langganan minyak bulanan/tahunan kepada rumah tangga besar.
+
+3. Perhatikan Ukuran Rumah (Home_Size)
+Rumah lebih besar cenderung menggunakan lebih banyak minyak pemanas.
+
+Strategi: Gunakan data ukuran rumah dari calon pelanggan untuk menentukan volume kebutuhan.
+
+Taktik: Sediakan kalkulator estimasi minyak berdasarkan ukuran rumah di situs/web aplikasi pemasaran.
+
+4. Pertimbangkan Profil Usia Penghuni
+Visualisasi menunjukkan konsumsi tidak terlalu tinggi pada rumah dengan penghuni usia lebih tua.
+
+Strategi: Untuk penghuni lanjut usia, tekankan kemudahan layanan dan kenyamanan (misalnya pengisian otomatis atau reminder berkala).
+
+Taktik: Gunakan bahasa pemasaran yang ramah dan berbasis layanan.
+
+5. Gunakan Data Prediktif
+Setelah model regresi dibangun (di Soal 2), marketer dapat memperkirakan konsumsi klien baru dan menyesuaikan penawaran.
+
+Strategi: Implementasikan dashboard berbasis prediksi yang tidak memperlihatkan data asli, tapi menampilkan rekomendasi jumlah minyak dan promosi yang sesuai.
+
+Taktik: Masing-masing marketer menerima alat prediksi berbasis model yang sudah disimpan (tanpa harus melihat data asli HeatingOil.csv).
+
+Kesimpulan Umum:
+Sarah sebaiknya mengarahkan anggaran pemasaran ke wilayah dingin, rumah besar, insulasi buruk, dan rumah tangga besar. Penawaran yang dipersonalisasi berdasarkan karakteristik rumah (ukuran, jumlah penghuni, suhu lokal) akan jauh lebih efektif daripada strategi generik.
+
+
+
+# SOAL 2
+
+## Bagian Sarah: Membuat dan Menyimpan Model Regresi
+
+```{r}
+# 1. Import Library
+library(readr)
+
+# 2. Membaca dataset HeatingOil.csv
+data <- read_csv("HeatingOil.csv")
+
+# 3. Membuat model regresi linier untuk memprediksi Heating_Oil
+model <- lm(Heating_Oil ~ Insulation + Temperature + Num_Occupants + Avg_Age + Home_Size, data = data)
+
+# 4. Melihat ringkasan model
+summary(model)
+
+# 5. Menyimpan model ke file (misalnya .rds)
+saveRDS(model, file = "model_heating_oil.rds")
+
+```
+ File model_heating_oil.rds ini yang akan dibagikan ke para marketer tanpa memberikan akses ke data aslinya (HeatingOil.csv).
+ 
+ 
+
+
+
+## Marketer: Menggunakan Model Tanpa Melihat Data Asli
+```{r}
+# 1. Import Library
+library(readr)
+
+# 2. Membaca model regresi yang sudah disimpan oleh Sarah
+model_loaded <- readRDS("model_heating_oil.rds")
+
+# 3. Membaca data pelanggan baru (HeatingOil-Marketing.csv)
+marketing_data <- read_csv("HeatingOil-Marketing.csv")
+
+# 4. Melihat sebagian data
+head(marketing_data)
+
+# 5. Memprediksi kebutuhan Heating_Oil untuk calon pelanggan baru
+marketing_data$Predicted_Heating_Oil <- predict(model_loaded, newdata = marketing_data)
+
+# 6. Menyimpan hasil prediksi ke file CSV
+write_csv(marketing_data, "PrediksiHeatingOil.csv")
+
+# 7. Menampilkan hasil prediksi
+head(marketing_data)
+
+```
+
+ Hasil Output
+File baru bernama PrediksiHeatingOil.csv akan berisi kolom tambahan Predicted_Heating_Oil, yaitu estimasi konsumsi minyak untuk tiap calon pelanggan.
+
+Marketer dapat menggunakan file ini untuk membuat rencana pemasaran tanpa pernah melihat data historis asli.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
